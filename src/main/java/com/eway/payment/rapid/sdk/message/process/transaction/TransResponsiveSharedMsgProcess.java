@@ -1,5 +1,7 @@
 package com.eway.payment.rapid.sdk.message.process.transaction;
 
+import javax.ws.rs.client.WebTarget;
+
 import com.eway.payment.rapid.sdk.beans.external.Transaction;
 import com.eway.payment.rapid.sdk.entities.CreateAccessCodeSharedRequest;
 import com.eway.payment.rapid.sdk.entities.CreateAccessCodeSharedResponse;
@@ -12,36 +14,42 @@ import com.eway.payment.rapid.sdk.message.convert.response.AccessCodeSharedToCre
 import com.eway.payment.rapid.sdk.message.process.AbstractMakeRequestMessageProcess;
 import com.eway.payment.rapid.sdk.output.CreateTransactionResponse;
 
-import com.sun.jersey.api.client.WebResource;
-
 /**
  * Create transaction with responsive shared message process
  */
-public class TransResponsiveSharedMsgProcess extends AbstractMakeRequestMessageProcess<Transaction, CreateTransactionResponse> {
+public class TransResponsiveSharedMsgProcess
+        extends AbstractMakeRequestMessageProcess<Transaction, CreateTransactionResponse>
+{
 
     /**
-     * @param resource The web resource to call Rapid API
-     * @param requestPath Path of request URL. Used to make full web service URL
+     * @param resource
+     *            The web resource to call Rapid API
+     * @param requestPath
+     *            Path of request URL. Used to make full web service URL
      */
-    public TransResponsiveSharedMsgProcess(WebResource resource, String... requestPath) {
+    public TransResponsiveSharedMsgProcess(WebTarget resource, String... requestPath)
+    {
         super(resource, requestPath);
     }
 
     @Override
-    protected Request createRequest(Transaction input) throws RapidSdkException {
+    protected Request createRequest(Transaction input) throws RapidSdkException
+    {
         BeanConverter<Transaction, CreateAccessCodeSharedRequest> converter = new TransactionToCreateAccessCodeSharedRequestConverter();
         return converter.doConvert(input);
     }
 
     @Override
-    protected CreateTransactionResponse makeResult(Response res) throws RapidSdkException {
+    protected CreateTransactionResponse makeResult(Response res) throws RapidSdkException
+    {
         CreateAccessCodeSharedResponse response = (CreateAccessCodeSharedResponse) res;
         BeanConverter<CreateAccessCodeSharedResponse, CreateTransactionResponse> convert = new AccessCodeSharedToCreateTransConverter();
         return convert.doConvert(response);
     }
 
     @Override
-    protected Response sendRequest(Request req) throws RapidSdkException {
+    protected Response sendRequest(Request req) throws RapidSdkException
+    {
         return doPost(req, CreateAccessCodeSharedResponse.class);
     }
 

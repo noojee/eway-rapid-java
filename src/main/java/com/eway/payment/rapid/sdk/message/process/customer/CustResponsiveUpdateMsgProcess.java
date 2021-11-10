@@ -1,32 +1,42 @@
 package com.eway.payment.rapid.sdk.message.process.customer;
 
+import javax.ws.rs.client.WebTarget;
+
 import com.eway.payment.rapid.sdk.beans.external.Customer;
 import com.eway.payment.rapid.sdk.beans.external.TransactionType;
 import com.eway.payment.rapid.sdk.beans.internal.Payment;
-import com.eway.payment.rapid.sdk.entities.*;
+import com.eway.payment.rapid.sdk.entities.CreateAccessCodeSharedRequest;
+import com.eway.payment.rapid.sdk.entities.CreateAccessCodeSharedResponse;
+import com.eway.payment.rapid.sdk.entities.CreateCustomerResponse;
+import com.eway.payment.rapid.sdk.entities.Request;
+import com.eway.payment.rapid.sdk.entities.Response;
 import com.eway.payment.rapid.sdk.exception.RapidSdkException;
 import com.eway.payment.rapid.sdk.message.convert.BeanConverter;
 import com.eway.payment.rapid.sdk.message.convert.CustomerToInternalCustomerConverter;
 import com.eway.payment.rapid.sdk.message.convert.response.AccessCodeSharedToCreateCustConverter;
 import com.eway.payment.rapid.sdk.message.process.AbstractMakeRequestMessageProcess;
 import com.eway.payment.rapid.sdk.util.Constant;
-import com.sun.jersey.api.client.WebResource;
 
 /**
  * Update customer with responsive shared method message process
  */
-public class CustResponsiveUpdateMsgProcess extends AbstractMakeRequestMessageProcess<Customer, CreateCustomerResponse> {
+public class CustResponsiveUpdateMsgProcess extends AbstractMakeRequestMessageProcess<Customer, CreateCustomerResponse>
+{
 
     /**
-     * @param resource The web resource to call Rapid API
-     * @param requestPath Path of request URL. Used to make full web service URL
+     * @param resource
+     *            The web resource to call Rapid API
+     * @param requestPath
+     *            Path of request URL. Used to make full web service URL
      */
-    public CustResponsiveUpdateMsgProcess(WebResource resource, String... requestPath) {
+    public CustResponsiveUpdateMsgProcess(WebTarget resource, String... requestPath)
+    {
         super(resource, requestPath);
     }
 
     @Override
-    protected Request createRequest(Customer input) throws RapidSdkException {
+    protected Request createRequest(Customer input) throws RapidSdkException
+    {
         CreateAccessCodeSharedRequest request = new CreateAccessCodeSharedRequest();
         CustomerToInternalCustomerConverter interCustConvert = new CustomerToInternalCustomerConverter();
         Payment payment = new Payment();
@@ -41,7 +51,8 @@ public class CustResponsiveUpdateMsgProcess extends AbstractMakeRequestMessagePr
     }
 
     @Override
-    protected CreateCustomerResponse makeResult(Response res) throws RapidSdkException {
+    protected CreateCustomerResponse makeResult(Response res) throws RapidSdkException
+    {
         // Cast to implement response object
         CreateAccessCodeSharedResponse response = (CreateAccessCodeSharedResponse) res;
         BeanConverter<CreateAccessCodeSharedResponse, CreateCustomerResponse> converter = new AccessCodeSharedToCreateCustConverter();
@@ -49,7 +60,8 @@ public class CustResponsiveUpdateMsgProcess extends AbstractMakeRequestMessagePr
     }
 
     @Override
-    protected Response sendRequest(Request req) throws RapidSdkException {
+    protected Response sendRequest(Request req) throws RapidSdkException
+    {
         return doPost(req, CreateAccessCodeSharedResponse.class);
     }
 

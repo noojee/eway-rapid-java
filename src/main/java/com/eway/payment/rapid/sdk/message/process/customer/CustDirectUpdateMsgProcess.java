@@ -1,5 +1,7 @@
 package com.eway.payment.rapid.sdk.message.process.customer;
 
+import javax.ws.rs.client.WebTarget;
+
 import com.eway.payment.rapid.sdk.beans.external.Customer;
 import com.eway.payment.rapid.sdk.beans.external.TransactionType;
 import com.eway.payment.rapid.sdk.beans.internal.Payment;
@@ -14,25 +16,30 @@ import com.eway.payment.rapid.sdk.message.convert.CustomerToInternalCustomerConv
 import com.eway.payment.rapid.sdk.message.convert.response.DirectPaymentToCreateCustConverter;
 import com.eway.payment.rapid.sdk.message.process.AbstractMakeRequestMessageProcess;
 import com.eway.payment.rapid.sdk.util.Constant;
-import com.sun.jersey.api.client.WebResource;
 
 /**
  * Update customer with direct payment method message process
  */
-public class CustDirectUpdateMsgProcess extends AbstractMakeRequestMessageProcess<Customer, CreateCustomerResponse> {
+public class CustDirectUpdateMsgProcess extends AbstractMakeRequestMessageProcess<Customer, CreateCustomerResponse>
+{
 
     /**
-     * @param resource The web resource to call Rapid API
-     * @param requestPath Path of request URL. Used to make full web service URL
+     * @param resource
+     *            The web resource to call Rapid API
+     * @param requestPath
+     *            Path of request URL. Used to make full web service URL
      */
-    public CustDirectUpdateMsgProcess(WebResource resource, String... requestPath) {
+    public CustDirectUpdateMsgProcess(WebTarget resource, String... requestPath)
+    {
         super(resource, requestPath);
     }
 
     @Override
-    protected Request createRequest(Customer input) throws RapidSdkException {
+    protected Request createRequest(Customer input) throws RapidSdkException
+    {
         DirectPaymentRequest request = new DirectPaymentRequest();
-        BeanConverter<Customer, com.eway.payment.rapid.sdk.beans.internal.Customer> interCustConvert = new CustomerToInternalCustomerConverter(false);
+        BeanConverter<Customer, com.eway.payment.rapid.sdk.beans.internal.Customer> interCustConvert = new CustomerToInternalCustomerConverter(
+                false);
         Payment payment = new Payment();
         payment.setTotalAmount(0);
         request.setPayment(payment);
@@ -44,12 +51,14 @@ public class CustDirectUpdateMsgProcess extends AbstractMakeRequestMessageProces
     }
 
     @Override
-    protected Response sendRequest(Request req) throws RapidSdkException {
+    protected Response sendRequest(Request req) throws RapidSdkException
+    {
         return doPost(req, DirectPaymentResponse.class);
     }
 
     @Override
-    protected CreateCustomerResponse makeResult(Response res) throws RapidSdkException {
+    protected CreateCustomerResponse makeResult(Response res) throws RapidSdkException
+    {
         DirectPaymentResponse response = (DirectPaymentResponse) res;
         DirectPaymentToCreateCustConverter converter = new DirectPaymentToCreateCustConverter();
         return converter.doConvert(response);
